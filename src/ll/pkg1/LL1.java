@@ -408,7 +408,8 @@ public class LL1 extends javax.swing.JFrame {
             }
             for (String p : primeros.keySet()) {
                 String[] vec = primeros.get(p).split("%");
-                primeroTextArea.append("Primero(" + p + ")= " + Arrays.toString(vec).replace("[", "{").replace("]", "}") + "\n");
+                String cadenaP=Arrays.toString(vec).substring(1,Arrays.toString(vec).length()-1);
+                primeroTextArea.append("Primero(" + p + ")= {" + cadenaP+ "}" + "\n");
 
             }
             calcularSiguiente(producciones);
@@ -468,7 +469,8 @@ public class LL1 extends javax.swing.JFrame {
 
             for (String p : siguientes.keySet()) {
                 String[] vec = siguientes.get(p).split("%");
-                siguienteTextArea.append("Siguiente(" + p + ")= " + Arrays.toString(vec).replace("[", "{").replace("]", "}") + "\n");
+                String cadenaP=Arrays.toString(vec).substring(1,Arrays.toString(vec).length()-1);
+                siguienteTextArea.append("Siguiente(" + p + ")= {" + cadenaP+ "}" + "\n");
             }
             posNT = new LinkedHashMap();
             posT = new LinkedHashMap();

@@ -217,17 +217,6 @@ public class LL1 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        noTerminales = new LinkedHashSet<>();
-        terminales = new LinkedHashSet<>();
-        producciones = new ArrayList<>();
-        primerosOrigen = new ArrayList<>();
-        primeros = new LinkedHashMap<>();
-        siguientes = new LinkedHashMap<>();
-        gammas = new ArrayList();
-        ch = new ArrayList<>();
-        for (int i = 0; i < 25; i++) {
-            ch.add((char) (i + 65));
-        }
         int responseCode = jFileChooser1.showOpenDialog(this);
         File selectedFile = null;
         if (responseCode == JFileChooser.APPROVE_OPTION) {
@@ -235,9 +224,20 @@ public class LL1 extends javax.swing.JFrame {
         }
         Scanner scan;
         String linea;
-        File archivoIN = new File(selectedFile.getPath());
         try {
+            File archivoIN = new File(selectedFile.getPath());
             scan = new Scanner(archivoIN);
+            noTerminales = new LinkedHashSet<>();
+            terminales = new LinkedHashSet<>();
+            producciones = new ArrayList<>();
+            primerosOrigen = new ArrayList<>();
+            primeros = new LinkedHashMap<>();
+            siguientes = new LinkedHashMap<>();
+            gammas = new ArrayList();
+            ch = new ArrayList<>();
+            for (int i = 0; i < 25; i++) {
+                ch.add((char) (i + 65));
+            }
             tablaMLabel.setVisible(true);
             tablaMTable.setVisible(true);
             primeroTextArea.setVisible(true);
@@ -415,53 +415,54 @@ public class LL1 extends javax.swing.JFrame {
             for (String p : siguientes.keySet()) {
                 String[] verif = siguientes.get(p).split("%");
                 String siguienteF = "";
-                int sw=0;
+                int sw = 0;
                 for (int t = 0; t < verif.length; t++) {
                     String aux = verif[t];
                     while (noTerminales.contains(aux)) {
-                        aux=primeros.get(aux);
+                        aux = primeros.get(aux);
                     }
-                        if(aux.contains("&") && sw==0){
-                            sw=1;
-                            String fini="";
-                            while (true){
-                                fini=siguientes.get(verif[t].substring(0, 1));
-                                if(!fini.contains("&")){
-                                    break;
-                            }
-                    }
-                       if(fini.lastIndexOf("%")==fini.length()-1){
-                            aux=aux.replace("&", fini.substring(0, fini.length()-1));
-                       }else{
-                            aux=aux.replace("&", fini);
-                       }
-                       
-                    }
-                    if(aux.contains("#")){
-                        int sw2=0;
-                        String cabezote="";
-                        for(String pr: producciones){
-                            String mirar[]=pr.split("->");
-                            if(mirar[1].contains(p) && sw2==0){
-                                sw2=1;
-                                cabezote=mirar[0];
+                    if (aux.contains("&") && sw == 0) {
+                        sw = 1;
+                        String fini = "";
+                        while (true) {
+                            fini = siguientes.get(verif[t].substring(0, 1));
+                            if (!fini.contains("&")) {
+                                break;
                             }
                         }
-                        cabezote=siguientes.get(cabezote);
-                        if(cabezote.lastIndexOf("%")==cabezote.length()-1){
-                            aux=aux.replace("#", cabezote.substring(0, cabezote.length()-1));
-                       }else{
-                            aux=aux.replace("#", cabezote);
-                       }
+                        if (fini.lastIndexOf("%") == fini.length() - 1) {
+                            aux = aux.replace("&", fini.substring(0, fini.length() - 1));
+                        } else {
+                            aux = aux.replace("&", fini);
+                        }
+
                     }
-                    if(aux.lastIndexOf("%")==aux.length()-1)
-                        aux=aux.substring(0,aux.length()-1);
-                    siguienteF+=aux+"%";
+                    if (aux.contains("#")) {
+                        int sw2 = 0;
+                        String cabezote = "";
+                        for (String pr : producciones) {
+                            String mirar[] = pr.split("->");
+                            if (mirar[1].contains(p) && sw2 == 0) {
+                                sw2 = 1;
+                                cabezote = mirar[0];
+                            }
+                        }
+                        cabezote = siguientes.get(cabezote);
+                        if (cabezote.lastIndexOf("%") == cabezote.length() - 1) {
+                            aux = aux.replace("#", cabezote.substring(0, cabezote.length() - 1));
+                        } else {
+                            aux = aux.replace("#", cabezote);
+                        }
+                    }
+                    if (aux.lastIndexOf("%") == aux.length() - 1) {
+                        aux = aux.substring(0, aux.length() - 1);
+                    }
+                    siguienteF += aux + "%";
                 }
-                if(!p.contains("'")){
+                if (!p.contains("'")) {
                     siguientes.put(p, siguienteF);
-                }else{
-                    siguientes.put(p, siguientes.get(p.substring(0,1)));
+                } else {
+                    siguientes.put(p, siguientes.get(p.substring(0, 1)));
                 }
             }
 
@@ -522,8 +523,9 @@ public class LL1 extends javax.swing.JFrame {
             validarTextField.setVisible(true);
             validarTable.setVisible(true);
 
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(null, "Archivo incorrecto!");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(rootPane, "Seleccione un archivo de entrada valido");
+
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -608,7 +610,7 @@ public class LL1 extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }

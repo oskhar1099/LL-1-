@@ -413,12 +413,18 @@ public class LL1 extends javax.swing.JFrame {
                                     j++;
                                     try {
                                         elemAux = cuerpo.substring(j, j + 1);
-                                        primAux = primeros.get(elemAux);
-                                        System.out.println(primAux);
-                                        if (primAux.indexOf("%") == primAux.length() - 1) {
-                                            primAux = primAux.substring(0, primAux.length() - 1);
+                                        if (terminales.contains(elemAux)) {
+                                            reemplazo = reemplazo.replace("&", elemAux);
+                                            break;
+                                        } else {
+                                            primAux = primeros.get(elemAux);
+                                            System.out.println(primAux);
+                                            if (primAux.indexOf("%") == primAux.length() - 1) {
+                                                primAux = primAux.substring(0, primAux.length() - 1);
+                                            }
+                                            reemplazo = reemplazo.replace("&", primAux);
                                         }
-                                        reemplazo = reemplazo.replace("&", primAux);
+
                                     } catch (Exception e) {
                                         break;
                                     }

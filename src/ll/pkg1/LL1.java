@@ -391,6 +391,47 @@ public class LL1 extends javax.swing.JFrame {
                             aux = primeros.get(aux);
                         }
                     }
+                    String cuerpo = producciones.get(pos).split("->")[1];
+                    String elemAux = "";
+                    String primAux = "";
+                    String reemplazo = "";
+                    int j = 1;
+                    int sw = 0;
+                    if (aux.contains("&") && cuerpo.length() > 1) {
+                        sw = 1;
+                        elemAux = cuerpo.substring(j, j + 1);
+                        if (terminales.contains(elemAux)) {
+                            reemplazo = elemAux;
+                        } else {
+                            primAux = primeros.get(elemAux);
+                            if (primAux.indexOf("%") == primAux.length() - 1) {
+                                primAux = primAux.substring(0, primAux.length() - 1);
+                            }
+                            reemplazo = primAux;
+                            while (true) {
+                                if (primAux.contains("&")) {
+                                    j++;
+                                    try {
+                                        elemAux = cuerpo.substring(j, j + 1);
+                                        primAux = primeros.get(elemAux);
+                                        System.out.println(primAux);
+                                        if (primAux.indexOf("%") == primAux.length() - 1) {
+                                            primAux = primAux.substring(0, primAux.length() - 1);
+                                        }
+                                        reemplazo = reemplazo.replace("&", primAux);
+                                    } catch (Exception e) {
+                                        break;
+                                    }
+
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (sw == 1) {
+                        aux = aux.replace("&", reemplazo);
+                    }
                     String vecP[] = aux.split("%");
                     for (String f : vecP) {
                         primerosOrigen.add(f + "%" + producciones.get(pos));
@@ -408,69 +449,77 @@ public class LL1 extends javax.swing.JFrame {
             }
             for (String p : primeros.keySet()) {
                 String[] vec = primeros.get(p).split("%");
-                String cadenaP=Arrays.toString(vec).substring(1,Arrays.toString(vec).length()-1);
-                primeroTextArea.append("Primero(" + p + ")= {" + cadenaP+ "}" + "\n");
+                String cadenaP = Arrays.toString(vec).substring(1, Arrays.toString(vec).length() - 1);
+                primeroTextArea.append("Primero(" + p + ")= {" + cadenaP + "}" + "\n");
 
             }
             calcularSiguiente(producciones);
-            for (String p : siguientes.keySet()) {
-                String[] verif = siguientes.get(p).split("%");
-                String siguienteF = "";
-                int sw = 0;
-                for (int t = 0; t < verif.length; t++) {
-                    String aux = verif[t];
-                    while (noTerminales.contains(aux)) {
-                        aux = primeros.get(aux);
-                    }
-                    if (aux.contains("&") && sw == 0) {
-                        sw = 1;
-                        String fini = "";
-                        while (true) {
-                            fini = siguientes.get(verif[t].substring(0, 1));
-                            if (!fini.contains("&")) {
-                                break;
-                            }
-                        }
-                        if (fini.lastIndexOf("%") == fini.length() - 1) {
-                            aux = aux.replace("&", fini.substring(0, fini.length() - 1));
-                        } else {
-                            aux = aux.replace("&", fini);
+            while (true) {
+                int swD = 0;
+                for (String p : siguientes.keySet()) {
+                    String[] verif = siguientes.get(p).split("%");
+                    String siguienteF = "";
+                    int sw = 0;
+                    for (int t = 0; t < verif.length; t++) {
+                        String aux = verif[t];
+                        while (noTerminales.contains(aux)) {
+                            aux = primeros.get(aux);
                         }
 
-                    }
-                    if (aux.contains("#")) {
-                        int sw2 = 0;
-                        String cabezote = "";
-                        for (String pr : producciones) {
-                            String mirar[] = pr.split("->");
-                            if (mirar[1].contains(p) && sw2 == 0) {
-                                sw2 = 1;
-                                cabezote = mirar[0];
+                        if (aux.contains("&") && sw == 0) {
+                            sw = 1;
+                            swD = 1;
+                            String fini = "";
+                            while (true) {
+                                fini = siguientes.get(verif[t].substring(0, 1));
+                                if (!fini.contains("&")) {
+                                    break;
+                                }
+                            }
+                            if (fini.lastIndexOf("%") == fini.length() - 1) {
+                                aux = aux.replace("&", fini.substring(0, fini.length() - 1));
+                            } else {
+                                aux = aux.replace("&", fini);
+                            }
+
+                        }
+                        if (aux.contains("#")) {
+                            int sw2 = 0;
+                            String cabezote = "";
+                            for (String pr : producciones) {
+                                String mirar[] = pr.split("->");
+                                if (mirar[1].contains(p) && sw2 == 0) {
+                                    sw2 = 1;
+                                    swD = 1;
+                                    cabezote = mirar[0];
+                                }
+                            }
+                            cabezote = siguientes.get(cabezote);
+                            if (cabezote.lastIndexOf("%") == cabezote.length() - 1) {
+                                aux = aux.replace("#", cabezote.substring(0, cabezote.length() - 1));
+                            } else {
+                                aux = aux.replace("#", cabezote);
                             }
                         }
-                        cabezote = siguientes.get(cabezote);
-                        if (cabezote.lastIndexOf("%") == cabezote.length() - 1) {
-                            aux = aux.replace("#", cabezote.substring(0, cabezote.length() - 1));
-                        } else {
-                            aux = aux.replace("#", cabezote);
+                        if (aux.lastIndexOf("%") == aux.length() - 1) {
+                            aux = aux.substring(0, aux.length() - 1);
                         }
+                        siguienteF += aux + "%";
                     }
-                    if (aux.lastIndexOf("%") == aux.length() - 1) {
-                        aux = aux.substring(0, aux.length() - 1);
+                    if (!p.contains("'")) {
+                        siguientes.put(p, siguienteF);
+                    } else {
+                        siguientes.put(p, siguientes.get(p.substring(0, 1)));
                     }
-                    siguienteF += aux + "%";
                 }
-                if (!p.contains("'")) {
-                    siguientes.put(p, siguienteF);
-                } else {
-                    siguientes.put(p, siguientes.get(p.substring(0, 1)));
+                if (swD == 0) {
+                    break;
                 }
             }
-
             for (String p : siguientes.keySet()) {
                 String[] vec = siguientes.get(p).split("%");
-                String cadenaP=Arrays.toString(vec).substring(1,Arrays.toString(vec).length()-1);
-                siguienteTextArea.append("Siguiente(" + p + ")= {" + cadenaP+ "}" + "\n");
+                String cadenaP = Arrays.toString(vec).substring(1, Arrays.toString(vec).length() - 1);
+                siguienteTextArea.append("Siguiente(" + p + ")= {" + cadenaP + "}" + "\n");
             }
             posNT = new LinkedHashMap();
             posT = new LinkedHashMap();
@@ -525,79 +574,78 @@ public class LL1 extends javax.swing.JFrame {
             validarTextField.setVisible(true);
             validarTable.setVisible(true);
 
-        } catch (Exception ex) {
+        } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(rootPane, "Seleccione un archivo de entrada valido");
 
         }
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void validarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validarButtonActionPerformed
         String entrada = validarTextField.getText();
-        if (entrada.isEmpty()) {
-            JOptionPane.showMessageDialog(rootPane, "Por favor ingrese una cadena a validar");
-        } else {
-            DefaultTableModel modelo2 = new DefaultTableModel();
-            modelo2.addColumn("Pila");
-            modelo2.addColumn("Entrada");
-            modelo2.addColumn("Salida");
-            int rowCount = 0;
+
+        DefaultTableModel modelo2 = new DefaultTableModel();
+        modelo2.addColumn("Pila");
+        modelo2.addColumn("Entrada");
+        modelo2.addColumn("Salida");
+        int rowCount = 0;
+        validarTable.setModel(modelo2);
+        Stack<String> pila = new Stack();
+        pila.push("$");
+        pila.push(prodsTextArea.getText().substring(0, 1));
+        entrada += "$";
+        while (true) {
+            rowCount++;
+            modelo2.setRowCount(rowCount);
             validarTable.setModel(modelo2);
-            Stack<String> pila = new Stack();
-            pila.push("$");
-            pila.push(prodsTextArea.getText().substring(0, 1));
-            entrada += "$";
-            while (true) {
-                rowCount++;
-                modelo2.setRowCount(rowCount);
-                validarTable.setModel(modelo2);
-                String pilaT = "";
-                for (String pila1 : pila) {
-                    pilaT += pila1;
+            String pilaT = "";
+            for (String pila1 : pila) {
+                pilaT += pila1;
+            }
+            modelo2.setValueAt(pilaT, rowCount - 1, 0);
+            modelo2.setValueAt(entrada, rowCount - 1, 1);
+            if (pila.lastElement().equals("$")) {
+                if (entrada.charAt(0) == '$') {
+                    modelo2.setValueAt("Aceptar", rowCount - 1, 2);
+                } else {
+                    modelo2.setValueAt("Error", rowCount - 1, 2);
                 }
-                modelo2.setValueAt(pilaT, rowCount - 1, 0);
-                modelo2.setValueAt(entrada, rowCount - 1, 1);
-                if (pila.lastElement().equals("$")) {
-                    if (entrada.charAt(0) == '$') {
-                        modelo2.setValueAt("Aceptar", rowCount - 1, 2);
-                    } else {
-                        modelo2.setValueAt("Error", rowCount - 1, 2);
+                break;
+            }
+            String buscar = "";
+            if (pila.lastElement().equals("'")) {
+                buscar = pila.get(pila.size() - 2) + "'";
+            } else {
+                buscar = pila.lastElement();
+            }
+            if (noTerminales.contains(buscar)) {
+                try {
+                    String salida = modelo.getValueAt(posNT.get(buscar),
+                            posT.get(String.valueOf(entrada.charAt(0)))).toString();
+                    modelo2.setValueAt(salida, rowCount - 1, 2);
+                    String produccion = salida.split("->")[1];
+                    pila.pop();
+                    if (buscar.contains("'")) {
+                        pila.pop();
                     }
+                    llenarPila(pila, produccion);
+                } catch (Exception e) {
+                    modelo2.setValueAt("Error", rowCount - 1, 2);
                     break;
                 }
-                String buscar = "";
-                if (pila.lastElement().equals("'")) {
-                    buscar = pila.get(pila.size() - 2) + "'";
-                } else {
-                    buscar = pila.lastElement();
-                }
-                if (noTerminales.contains(buscar)) {
-                    try {
-                        String salida = modelo.getValueAt(posNT.get(buscar),
-                                posT.get(String.valueOf(entrada.charAt(0)))).toString();
-                        modelo2.setValueAt(salida, rowCount - 1, 2);
-                        String produccion = salida.split("->")[1];
-                        pila.pop();
-                        if (buscar.contains("'")) {
-                            pila.pop();
-                        }
-                        llenarPila(pila, produccion);
-                    } catch (Exception e) {
-                        modelo2.setValueAt("Error", rowCount - 1, 2);
-                        break;
-                    }
 
+            } else {
+                if (pila.lastElement().equals(String.valueOf(entrada.charAt(0)))) {
+                    entrada = entrada.substring(1);
+                    pila.pop();
                 } else {
-                    if (pila.lastElement().equals(String.valueOf(entrada.charAt(0)))) {
-                        entrada = entrada.substring(1);
-                        pila.pop();
-                    } else {
-                        modelo2.setValueAt("Error", rowCount - 1, 2);
-                        break;
-                    }
+                    modelo2.setValueAt("Error", rowCount - 1, 2);
+                    break;
                 }
-
             }
+
         }
+
 
     }//GEN-LAST:event_validarButtonActionPerformed
 

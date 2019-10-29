@@ -794,7 +794,7 @@ public class LL1 extends javax.swing.JFrame {
                             }
                         } catch (Exception ex) {
                             swP = 2;
-                            if (!divid[0].contains("'")) {
+                            if (!divid[0].contains("'") && !divid[0].equals(e)) {
                                 siguienteDef += "#%";
                             }
                         }

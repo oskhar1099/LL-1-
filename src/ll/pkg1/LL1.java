@@ -400,39 +400,49 @@ public class LL1 extends javax.swing.JFrame {
                     if (aux.contains("&") && cuerpo.length() > 1) {
                         sw = 1;
                         elemAux = cuerpo.substring(j, j + 1);
-                        if (terminales.contains(elemAux)) {
-                            reemplazo = elemAux;
-                        } else {
-                            primAux = primeros.get(elemAux);
-                            if (primAux.indexOf("%") == primAux.length() - 1) {
-                                primAux = primAux.substring(0, primAux.length() - 1);
-                            }
-                            reemplazo = primAux;
-                            while (true) {
-                                if (primAux.contains("&")) {
-                                    j++;
-                                    try {
-                                        elemAux = cuerpo.substring(j, j + 1);
-                                        if (terminales.contains(elemAux)) {
-                                            reemplazo = reemplazo.replace("&", elemAux);
-                                            break;
-                                        } else {
-                                            primAux = primeros.get(elemAux);
-                                            if (primAux.indexOf("%") == primAux.length() - 1) {
-                                                primAux = primAux.substring(0, primAux.length() - 1);
+                        if (!elemAux.equals("'")) {
+                            if (terminales.contains(elemAux)) {
+                                reemplazo = elemAux;
+                            } else {
+                                if (j + 1 < cuerpo.length()) {
+                                    if (cuerpo.substring(j + 1, j + 2).equals("'")) {
+                                        elemAux += "'";
+                                    }
+                                }
+                                primAux = primeros.get(elemAux);
+                                if (primAux.indexOf("%") == primAux.length() - 1) {
+                                    primAux = primAux.substring(0, primAux.length() - 1);
+                                }
+                                reemplazo = primAux;
+                                while (true) {
+                                    if (primAux.contains("&")) {
+                                        j++;
+                                        try {
+                                            elemAux = cuerpo.substring(j, j + 1);
+                                            if (terminales.contains(elemAux)) {
+                                                reemplazo = reemplazo.replace("&", elemAux);
+                                                break;
+                                            } else {
+                                                primAux = primeros.get(elemAux);
+                                                if (primAux.indexOf("%") == primAux.length() - 1) {
+                                                    primAux = primAux.substring(0, primAux.length() - 1);
+                                                }
+                                                reemplazo = reemplazo.replace("&", primAux);
                                             }
-                                            reemplazo = reemplazo.replace("&", primAux);
+
+                                        } catch (Exception e) {
+                                            break;
                                         }
 
-                                    } catch (Exception e) {
+                                    } else {
                                         break;
                                     }
-
-                                } else {
-                                    break;
                                 }
                             }
+                        } else {
+                            j++;
                         }
+
                     }
                     if (sw == 1) {
                         aux = aux.replace("&", reemplazo);
